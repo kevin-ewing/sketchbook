@@ -1,23 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto&display=swap');
+
 body {
   width:500px;
   margin: auto;
+}
+
+h1 {
+  font-family: 'EB Garamond', serif;
 }
 
 #sketches table {
   width: 100%;
 }
 
+hr {
+  border: none;
+  height: 2px;
+  /* Set the hr color */
+  color: #333; /* old IE */
+  background-color: #333; /* Modern Browsers */
+}
+
 
 #sketches .name{
+  font-family: 'Roboto', sans-serif;
   font-weight: bold;
   font-size: larger;
 }
 
 #sketches .name a{
+  color:#d67a56;
   text-decoration: none;
 }
 
+
 #sketches .date{
-  font-size: 80%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 90%;
   text-align:right;
 }
