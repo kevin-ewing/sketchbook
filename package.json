@@ -1,0 +1,19 @@
+{
+  "name": "sketchbook-template",
+  "version": "1.0.0",
+  "description": "A repo for maintaining a sketchbook of sketches.",
+  "main": "make-sketch-list.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristopherPAndrews/sample-sketchbook.git"
+  },
+  "author": "Christopher Andrews <candrews@middlebury.edu>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ChristopherPAndrews/sample-sketchbook/issues"
+  },
+  "homepage": "https://github.com/ChristopherPAndrews/sample-sketchbook#readme"
+}

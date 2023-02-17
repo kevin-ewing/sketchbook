@@ -1,0 +1,27 @@
+name: Update JSON listing
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+        cache: 'npm'
+    - run: node make-sketch-list.mjs
+    - uses: EndBug/add-and-commit@v9
+      with: 
+        author_name: "Sketch updater"
+        message: "Updated sketch list"
+        add: "sketches.json"
+

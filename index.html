@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Name Sketchbook</title>
+  <link rel="stylesheet" type="text/css" href="sketchbook.css">
+</head>
+<body>
+  <h1><em>Name's</em> Sketchbook</h1>
+  <hr />
+  <div id="sketches">
+  
+
+    <table>
+      <tbody id="sketch-table">
+      </tbody>
+    </table>
+  </div>
+  <script type="text/javascript">
+
+    const loadSketches = async()=>{
+      const response = await fetch("sketches.json");
+      const data = await response.json();
+
+// should sort the sketches by date
+
+      const table = document.getElementById('sketch-table');
+      data.forEach((sketch)=>{
+        const link = document.createElement('a');
+        link.href = `sketches/${sketch.name}`;
+        link.innerHTML = sketch.name;
+
+        const row = document.createElement('tr');
+        let cell = document.createElement('td');
+        cell.className = 'name';
+        cell.appendChild(link);
+        row.appendChild(cell);
+
+        cell = document.createElement('td');
+        cell.className = 'date';
+        cell.innerHTML = sketch.date;
+        row.appendChild(cell);
+        table.appendChild(row);
+      })
+    };
+  
+    loadSketches();
+  
+
+  </script>
+</body>
+</html>
