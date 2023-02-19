@@ -1,9 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Roboto&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Fira+Code&family=Roboto&display=swap');
+
 
 body {
-  width:500px;
-  margin: auto;
+  width: 500px;
+  margin: 0 auto;
+  padding: 0;
+  background-image: url("/resources/background.png");
+  background-repeat: repeat;
 }
+
 
 h1 {
   font-family: 'EB Garamond', serif;
@@ -15,6 +20,7 @@ h1 {
 
 hr {
   border: none;
+  width: 100%;;
   height: 2px;
   /* Set the hr color */
   color: #333; /* old IE */
@@ -33,9 +39,8 @@ hr {
   text-decoration: none;
 }
 
-
 #sketches .date{
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Fira Code', monospace;
   font-size: 90%;
   text-align:right;
 }

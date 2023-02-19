@@ -21,12 +21,25 @@ const sketches = [];
 for (let sketch of sketcheDirs){
   const stat = statSync(path.join(root, sketch.name));
 
+  const d = stat.birthtime
+
   sketches.push({
     name:sketch.name,
-    date:stat.birthtime
+    raw_date: d,
+    date: d.toLocaleDateString() + " at " + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
   })
 
 }
+
+sketches.sort(function(a, b) {
+  var keyA = new Date(a.raw_date),
+    keyB = new Date(b.raw_date);
+  // Compare the 2 dates
+  if (keyA > keyB) return -1;
+  if (keyA < keyB) return 1;
+  return 0;
+});
+
 
 const json = JSON.stringify(sketches);
 let filehandle = null;
