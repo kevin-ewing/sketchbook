@@ -1,37 +1,69 @@
 function setup() {
   colorMode(HSB, 100);
   createCanvas(1000, 1000);
-  background(0,0,0);
+
+
 }
 
 
 
 function draw() {
-  const originx = gaussianRandom(500,20)
-  const originy = gaussianRandom(500,15)
-  const angle = Math.random()*360
-  const swirl = gaussianRandom(0,.5)
-  const base_hue = Math.random()*100
+  background(0,0,0);
+  let base_hue = Math.random()*100
 
-  for (let i = 0; i < 50000; i++) {
-    const x = gaussianRandom(500,100)
-    const y = gaussianRandom(500,40)
 
-    const distance = getDistance(originx,originy,x,y)
-    const scaled_angle = (distance * swirl) + angle
-    const rotated = my_rotate(originx, originy, x, y, scaled_angle)
-
-    const star_size = (1000-distance)*.001
-    const my_hue = gaussianRandom(base_hue,20)
-    const my_sat = gaussianRandom(8, 20)
-    const my_alpha = gaussianRandom(80, 10)
+  for (let i = 0; i < 10000; i++) {
+    let x = random(width); // random x position within the canvas
+    let y = random(height); // random y position within the canvas
+    let my_hue = gaussianRandom(base_hue,.1)
+    let my_sat = gaussianRandom(8, 20)
+    let my_alpha = gaussianRandom(30, 30)
+    let star_size = Math.random()*1.5
 
     my_color = color(my_hue, my_sat, 100, my_alpha)
-    star(rotated[0],rotated[1], star_size, my_color)
+    star(x,y, star_size, my_color)
+  }
+
+
+  let originx = gaussianRandom(500,20)
+  let originy = gaussianRandom(500,15)
+  let angle = Math.random()*360
+  let swirl = gaussianRandom(0,.5)
+
+  for (let i = 0; i < 100000; i++) {
+    let x = gaussianRandom(500,100)
+    let y = gaussianRandom(500,40)
+
+    let distance = getDistance(originx,originy,x,y)
+    let scaled_angle = (distance * swirl) + angle
+    let rotated = my_rotate(originx, originy, x, y, scaled_angle)
+
+    let star_size = (Math.pow((1000-distance),2)*.000002)
+    let my_hue = gaussianRandom(base_hue,20)
+    let my_sat = gaussianRandom(8, 20)
+    let my_alpha = gaussianRandom(30, 30)
+
+    my_color = color(my_hue, my_sat, 100, my_alpha)
+
+    if (star_size > 0){
+      star(rotated[0],rotated[1], star_size, my_color)
+    }
   } 
+
+  circularGradient(originx,originy, 100)
 
   noLoop();
 
+}
+
+
+function circularGradient(x, y, r) {
+  let gradient = drawingContext.createRadialGradient(x, y, 0, x, y, r);
+  gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  drawingContext.fillStyle = gradient;
+  drawingContext.arc(x, y, r, 0, 2 * PI);
+  drawingContext.fill();
 }
 
 
