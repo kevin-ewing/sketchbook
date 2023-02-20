@@ -3,6 +3,7 @@ function setup() {
   createCanvas(800, 800);
   background(0,0,100);
   my_color = 0;
+  frameRate(120); 
   
   // RECT MODE options
   // rectMode(corner) (DEFAULT)

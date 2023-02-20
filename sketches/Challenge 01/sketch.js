@@ -1,13 +1,18 @@
+let grainSize = 2;
+
+
 function setup() {
   colorMode(HSB, 100)
   createCanvas(800, 780);
   stroke('#5C4355')
   strokeWeight(8)
+  noLoop()
 }
 
-
-
 function draw() {
+  let img = createImage(width, height);
+
+  
   //COLORS
   black = '#27211E'
   yellow = '#FCED00'
@@ -60,7 +65,30 @@ function draw() {
   my_rect(512, 708, 736, 800, grey)
   my_rect(708, 810, 626, 800, white)
   
-  granulateChannels(10);
+
+  // Add noise to the image
+  loadPixels();
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height*200; j++) {
+      let index = (i + j * width) * 4;
+      let r = pixels[index];
+      let g = pixels[index + 1];
+      let b = pixels[index + 2];
+      let a = pixels[index + 3];
+      
+      // Add noise to the color values
+      r += random(-20, 20);
+      g += random(-20, 20);
+      b += random(-20, 20);
+      
+      pixels[index] = r;
+      pixels[index + 1] = g;
+      pixels[index + 2] = b;
+      pixels[index + 3] = a;
+    }
+  }
+  updatePixels();
+
 }
 
 function my_rect(x1,x2, y1,y2, hex_col){
@@ -71,19 +99,4 @@ function my_rect(x1,x2, y1,y2, hex_col){
   
   fill(hex_col);
   rect(x1, y1, width, height);
-}
-
-
-function granulateChannels(amount) {
-  loadPixels();
-  const d = pixelDensity();
-  const pixelsCount = 4 * (width * d) * (height * d);
-  for (let i = 0; i < pixelsCount; i += 4) {
-      pixels[i] = pixels[i] + random(-amount, amount);
-      pixels[i+1] = pixels[i+1] + random(-amount, amount);
-      pixels[i+2] = pixels[i+2] + random(-amount, amount);
-      // comment in, if you want to granulate the alpha value
-      // pixels[i+3] = pixels[i+3] + random(-amount, amount);
-  }
-  updatePixels();
 }
