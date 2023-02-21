@@ -1,6 +1,7 @@
 let agents = [];
 let trail = [];
 let my_hue = 0;
+let circle_hue_offset = .1
 
 function setup() {
   colorMode(HSB, 1);
@@ -54,11 +55,16 @@ class Agent {
   }
 
   display() {
-    // ellipse(this.pos.x, this.pos.y, 20, 20);
+    // noStroke();
+    // let complement_hue = my_hue + circle_hue_offset;
+    // if (complement_hue > 1){
+    //   complement_hue -= 1;
+    // }
+    // fill(complement_hue, 1, 1, .5);
+    // ellipse(this.pos.x, this.pos.y, 10, 10);
     for (let i = 0; i < trail.length; i++) {
       let d = dist(this.pos.x, this.pos.y, trail[i].x, trail[i].y);
-      let line_hue = my_hue + myRandom(-0.02,0.02);
-      stroke(line_hue, 1, 1, .2);
+      stroke(my_hue + myRandom(-0.02,0.02), 1, .8, .2);
       line(this.pos.x, this.pos.y, trail[i].x, trail[i].y);
     }
   }

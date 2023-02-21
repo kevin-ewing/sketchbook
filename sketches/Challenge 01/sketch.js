@@ -1,4 +1,5 @@
 let grainSize = 2;
+const NOISE_DIFF = 13;
 
 
 function setup() {
@@ -68,6 +69,8 @@ function draw() {
 
   // Add noise to the image
   loadPixels();
+  // for (let i = 0; i < width; i++) {
+  //   for (let j = 0; j < height; j++) {
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height*200; j++) {
       let index = (i + j * width) * 4;
@@ -77,9 +80,9 @@ function draw() {
       let a = pixels[index + 3];
       
       // Add noise to the color values
-      r += random(-20, 20);
-      g += random(-20, 20);
-      b += random(-20, 20);
+      r += random(-NOISE_DIFF, NOISE_DIFF);
+      g += random(-NOISE_DIFF, NOISE_DIFF);
+      b += random(-NOISE_DIFF, NOISE_DIFF);
       
       pixels[index] = r;
       pixels[index + 1] = g;
@@ -90,6 +93,7 @@ function draw() {
   updatePixels();
 
 }
+
 
 function my_rect(x1,x2, y1,y2, hex_col){
   // Function that creates a rectangle of color "hex_color" with the top left edge at (x1,y1) and the bottom right edge at (x2,y2)    
