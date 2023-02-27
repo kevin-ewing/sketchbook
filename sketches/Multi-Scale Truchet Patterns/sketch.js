@@ -1,5 +1,5 @@
 let TILES = 4;
-const LEVELS = 4;
+const LEVELS = 49;
 const STROKE_FACTOR = 5;
 const DIFF_TILES = 5;
 const ALPHA = 255;
