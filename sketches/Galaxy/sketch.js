@@ -1,11 +1,9 @@
+// Maybe more colors and more variation in star size might give it a little bit more depth.
+
 function setup() {
   colorMode(HSB, 100);
   createCanvas(1000, 1000);
-
-
 }
-
-
 
 function draw() {
   background(0,0,0);
