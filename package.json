@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ChristopherPAndrews/sample-sketchbook/issues"
   },
-  "homepage": "https://github.com/ChristopherPAndrews/sample-sketchbook#readme"
+  "homepage": "https://github.com/ChristopherPAndrews/sample-sketchbook#readme",
+  "dependencies": {
+    "sunrise-sunset-js": "^2.2.1"
+  }
 }
