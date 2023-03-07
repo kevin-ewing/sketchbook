@@ -478,4 +478,9 @@ function get_TOD(time){
       TOD_INDICATOR = 1;
     }
   }
+  else{
+    if(time.getHours() < 7 || time.getHours() > 19){
+      TOD_INDICATOR = 1;
+    }
+  }
 }
