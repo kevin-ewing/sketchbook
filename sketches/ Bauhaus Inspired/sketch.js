@@ -102,9 +102,13 @@ function getAnalogousColors(myColor) {
   }
   
   // Convert the hues, saturation, and brightness to RGB hex codes
-  for (let i = 0; i < hues.length; i++) {
+  for (let i = 0; i < hues.length - 1; i++) {
     colors.push(color(hues[i], saturation(myColor), brightness(myColor)));
   }
+
+  colors.push(color(hues.slice(-1)[0] , saturation(myColor), 50));
+
+  colors.push(color("#ffffff"));
   
   return colors;
 }
