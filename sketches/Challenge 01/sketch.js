@@ -77,7 +77,6 @@ function draw() {
       let r = pixels[index];
       let g = pixels[index + 1];
       let b = pixels[index + 2];
-      let a = pixels[index + 3];
       
       // Add noise to the color values
       r += random(-NOISE_DIFF, NOISE_DIFF);
@@ -87,7 +86,6 @@ function draw() {
       pixels[index] = r;
       pixels[index + 1] = g;
       pixels[index + 2] = b;
-      pixels[index + 3] = a;
     }
   }
   updatePixels();

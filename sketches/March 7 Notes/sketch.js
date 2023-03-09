@@ -1,3 +1,5 @@
+const NOISE_DIFF = 15;
+
 function setup() {
   createCanvas(800, 800); // create a 400 x 400 canvas
   angleMode(DEGREES);
@@ -10,7 +12,6 @@ function draw() {
   background(321,83,86); // set the background color to gray
   stroke(321,83,86); // set the stroke color to black
   strokeWeight(2);
-  let hueIndicator = 0;
   translate(width/2, height/2);
   let myRadius= width/2-25;
   let myAngle = 360/8
@@ -40,4 +41,28 @@ function draw() {
     rotate(myAngle/4);
     scale(.94);
   }
+
+  // Add noise to the image
+  loadPixels();
+  // for (let i = 0; i < width; i++) {
+  //   for (let j = 0; j < height; j++) {
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height * 4; j++) {
+      let index = (i + j * width) * 4;
+      let r = pixels[index];
+      let g = pixels[index + 1];
+      let b = pixels[index + 2];
+      
+      // Add noise to the color values
+      r += random(-NOISE_DIFF, NOISE_DIFF);
+      g += random(-NOISE_DIFF, NOISE_DIFF);
+      b += random(-NOISE_DIFF, NOISE_DIFF);
+      
+      pixels[index] = r;
+      pixels[index + 1] = g;
+      pixels[index + 2] = b;
+    }
+  }
+  updatePixels();
+
 }
