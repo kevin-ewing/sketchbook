@@ -100,8 +100,6 @@ function getAnalogousColors(myColor) {
   for (let i = 0; i < hues.length; i++) {
     hues[i] = (hues[i] + 360) % 360;
   }
-
-  console.log(hues);
   
   // Convert the hues, saturation, and brightness to RGB hex codes
   for (let i = 0; i < hues.length; i++) {
