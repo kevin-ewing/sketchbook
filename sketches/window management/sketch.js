@@ -28,7 +28,7 @@ function draw() {
     noStroke();
     push()
 
-    rect( BALL_SIZE, BALL_SIZE);
+    rect(creatures[iter].position.x, creatures[iter].position.y, BALL_SIZE, BALL_SIZE);
     pop()
 
     creatures[iter].position = creatures[iter].next; 
