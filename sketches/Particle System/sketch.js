@@ -1,135 +1,168 @@
-const RADIUS1 = 20;
-const RADIUS2 = 10;
-
+const PART_PER_DRAW = 50;
+const MAX_AGE = 250;
 let system;
-let wind;
+let attractor;
+let smoke;
+
 
 function setup() {
-  createCanvas(800,800);
-  background(220);
+  createCanvas(600, 600);
+  noStroke();
+  imageMode(CENTER);
+  smoke = createGraphics(50, 50);
+  drawSmoke(smoke);
 
-  system = new System();
-
-  let ball = new Ball(random(RADIUS1, width - RADIUS1), random(RADIUS1, 300),RADIUS1, "red");
-  system.addObject(ball);
-
-  let ball2 = new Ball(random(RADIUS2, width - RADIUS2), random(RADIUS2, 300),RADIUS2, "blue");
-  system.addObject(ball2);
-
-  //add gravity
+  system = new ParticleSystem(width / 2, height);
   system.addForce({
-    name:"Gravity",
-    base: createVector(0,2),
-    applyTo(obj){
-      obj.applyForce(p5.Vector.mult(this.base, obj.mass));
-    }
-  }
-  );
+    name: "rising gravity",
+    base: createVector(0, -0.005),
+    applyTo(p) {
+      p.applyForce(this.base);
+    },
+  });
 
-  //add wind
-  wind = {
-    name:"Gravity",
-    base: createVector(0,2),
-    applyTo(obj){
-      obj.applyForce(this.base);
-    }
-  }
+  // system.addForce({
+  //   name: "wind",
+  //   base: createVector(0.01, 0),
+  //   applyTo(p) {
+  //     p.applyForce(this.base);
+  //   },
+  // });
 
-  system.addForce(wind);
+  attractor = new Attractor(-10);
+  system.addForce({
+    name: "attractor",
+    applyTo(particle){
+      let v = p5.Vector.sub(attractor.position, particle.position);
+      let magnitude = attractor.strength/constrain(v.magSq(),25, width);
+      let v_hat = v.normalize();
+      particle.applyForce(v_hat.mult(magnitude));
+    }
+  });
+
 
 }
-
-
 
 function draw() {
-  background(220);
-
-  system.draw();
+  background(0);
   system.update();
-
-  if (mouseIsPressed){
-    wind.base.x = width/2 - mouseX;
-    wind.base.y = height /2 - mouseY;
-    wind.base.normalize();
-    wind.base.mult(10000);
-  }else{
-    wind.base.mult(0);
-  }
-
-  noFill();
-  stroke("black");
-  rect(0,0,width,height);
+  system.draw();
+  attractor.position.x = mouseX;
+  attractor.position.y = mouseY;
 }
 
 
-class System{
-  objects = [];
-  forces = [];
+class Attractor {
 
-  addObject(obj){
-    this.objects.push(obj);
+  constructor(strength) {
+    this.strength = strength;
+    this.position = createVector(0, 0);
+  }
+}
+
+
+class ParticleSystem {
+  particles = [];
+  forces = [];
+  pool = [];
+
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.pool = []
   }
 
-  addForce(force){
+  addForce(force) {
     this.forces.push(force);
   }
 
-  update(){
-    for (let force of this.forces){
-      for (let obj of this.objects){
-        // obj.applyForce(force);
-        force.applyTo(obj);
+  update() {
+
+    for (let x =0; x <= PART_PER_DRAW; x ++){
+      let p;
+      if (this.pool.length > 0){
+        p = this.pool.pop();
+        p.life = random(50,MAX_AGE);
+        p.velocity.mult(0);
+        p.force.mult(0);
+      }
+      else{
+        p = new Particle();
+        this.particles.push(p);
+      }
+      const angle = random(245, 295);
+      p.position.x = this.position.x + random(-30, 30);
+      p.position.y = this.position.y;
+      const f = p5.Vector.fromAngle(radians(angle), random(.5,1));
+      p.applyForce(f);
+    }
+ 
+
+    for (let force of this.forces) {
+      for (let p of this.particles) {
+        force.applyTo(p);
       }
     }
 
-    this.objects.forEach((obj)=>{
-      obj.update();
-    });
+    for (let p of this.particles) {
+        p.update();
+        if (p.life <= 0){
+          this.pool.push(p);
+        }
+    }
   }
 
-  draw(){
-    this.objects.forEach((obj)=>{
-      obj.draw();
-    });
+  draw() {
+    for (let p of this.particles) {
+        p.draw();
+    }
   }
 }
 
-class Ball {
-  constructor(x,y, radius, my_color){
-    this.radius = radius;
-    this.color = color(my_color);
-    this.position = createVector(x,y);
-    this.mass = pow(radius,3)*PI*(4/3);
-    this.velocity = createVector(10,4);
-    this.force = createVector(0,0);
+class Particle {
+  constructor() {
+    this.position = createVector(0, 0)
+    this.velocity = createVector(0, 0);
+    this.force = createVector(0, 0);
+    this.life = random(50,MAX_AGE)
   }
 
-  update() {
-    const acceleration = p5.Vector.div(this.force, this.mass);
-    this.force.mult(0);
-    this.velocity.add(acceleration);
-    this.position.add(this.velocity);
-
-    this.velocity.x *= 0.995;
-    
-    if (this.position.x - this.radius < 0 || this.position.x + this.radius >= width){
-      this.velocity.x *= -0.9;
-    }
-    if (this.position.y - this.radius < 0 || this.position.y + this.radius >= height){
-      this.velocity.y *= -0.9;
-    }
-
-    this.position.x = min(width - this.radius, max(this.radius, this.position.x));
-    this.position.y = min(height - this.radius, max(this.radius, this.position.y));
-
-  }
-
-  applyForce(force){
+  applyForce(force) {
     this.force.add(force);
   }
 
-  draw(){
-    fill(this.color)
-    circle(this.position.x, this.position.y, this.radius*2);
+  update() {
+    if (this.life > 0){
+      // the particle is massless, so we can just use the force as the acceleration
+      this.velocity.add(this.force);
+      this.position.add(this.velocity);
+
+      this.force.x = 0;
+      this.force.y = 0;
+
+      this.life --;
+    }
+  }
+
+  draw() {
+    if (this.life > 0){
+      // fill(256,256*(this.life/200));
+      // circle(this.position.x, this.position.y, 2);
+      image(smoke, this.position.x, this.position.y)
+    }
+  }
+}
+
+function drawSmoke(g) {
+  g.clear();
+  g.noStroke();
+  let center = createVector(g.width / 2, g.height / 2);
+  for (let x = 0; x < g.width; x++) {
+    for (let y = 0; y < g.height; y++) {
+      let pos = createVector(x, y);
+      let d = dist(pos.x, pos.y, center.x, center.y);
+      let alpha = map(d, 0, g.width / 3, 16, 0, true);
+      g.fill(255, alpha);
+      g.rect(x, y, 1, 1);
+    }
   }
 }

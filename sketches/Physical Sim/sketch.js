@@ -1,168 +1,168 @@
-const PART_PER_DRAW = 50;
-const MAX_AGE = 250;
-let system;
-let attractor;
-let smoke;
+const NUM_BALLS = 1000;
+let BG_COLOR;
+let COLOR_ARRAY;
+let MAIN_COLOR;
 
+let system;
+let wind;
 
 function setup() {
-  createCanvas(600, 600);
-  noStroke();
-  imageMode(CENTER);
-  smoke = createGraphics(50, 50);
-  drawSmoke(smoke);
+  createCanvas(800,800);
+  colorMode(HSB,360);
+  MAIN_COLOR = color(random(0,360),200,300);
+  COLOR_ARRAY = getAnalogousColors(MAIN_COLOR);
+  BG_COLOR = color(hue(MAIN_COLOR),100,200, 10);
 
-  system = new ParticleSystem(width / 2, height);
+  system = new System();
+
+  let ball;
+
+  for (let x = 0; x <= NUM_BALLS; x++){
+    let temp_rad = random(1,10)
+    ball =  new Ball(random(temp_rad, width - temp_rad), random(temp_rad, 300), temp_rad, random(COLOR_ARRAY));
+    system.addObject(ball);
+  }
+
+  //add gravity
   system.addForce({
-    name: "rising gravity",
-    base: createVector(0, -0.005),
-    applyTo(p) {
-      p.applyForce(this.base);
-    },
-  });
-
-  // system.addForce({
-  //   name: "wind",
-  //   base: createVector(0.01, 0),
-  //   applyTo(p) {
-  //     p.applyForce(this.base);
-  //   },
-  // });
-
-  attractor = new Attractor(-10);
-  system.addForce({
-    name: "attractor",
-    applyTo(particle){
-      let v = p5.Vector.sub(attractor.position, particle.position);
-      let magnitude = attractor.strength/constrain(v.magSq(),25, width);
-      let v_hat = v.normalize();
-      particle.applyForce(v_hat.mult(magnitude));
+    name:"Gravity",
+    base: createVector(0,2),
+    applyTo(obj){
+      obj.applyForce(p5.Vector.mult(this.base, obj.mass));
     }
-  });
+  }
+  );
 
+  //add wind
+  wind = {
+    name:"Gravity",
+    base: createVector(0,2),
+    applyTo(obj){
+      obj.applyForce(this.base);
+    }
+  }
+
+  system.addForce(wind);
 
 }
+
+
 
 function draw() {
-  background(0);
-  system.update();
+  background(BG_COLOR);
+
   system.draw();
-  attractor.position.x = mouseX;
-  attractor.position.y = mouseY;
-}
+  system.update();
 
-
-class Attractor {
-
-  constructor(strength) {
-    this.strength = strength;
-    this.position = createVector(0, 0);
+  if (mouseIsPressed){
+    wind.base.x = width/2 - mouseX;
+    wind.base.y = height /2 - mouseY;
+    wind.base.normalize();
+    wind.base.mult(10000);
+  }else{
+    wind.base.mult(0);
   }
 }
 
 
-class ParticleSystem {
-  particles = [];
+class System{
+  objects = [];
   forces = [];
-  pool = [];
 
-  constructor(x, y) {
-    this.position = createVector(x, y);
-    this.pool = []
+  addObject(obj){
+    this.objects.push(obj);
   }
 
-  addForce(force) {
+  addForce(force){
     this.forces.push(force);
   }
 
-  update() {
-
-    for (let x =0; x <= PART_PER_DRAW; x ++){
-      let p;
-      if (this.pool.length > 0){
-        p = this.pool.pop();
-        p.life = random(50,MAX_AGE);
-        p.velocity.mult(0);
-        p.force.mult(0);
-      }
-      else{
-        p = new Particle();
-        this.particles.push(p);
-      }
-      const angle = random(245, 295);
-      p.position.x = this.position.x + random(-30, 30);
-      p.position.y = this.position.y;
-      const f = p5.Vector.fromAngle(radians(angle), random(.5,1));
-      p.applyForce(f);
-    }
- 
-
-    for (let force of this.forces) {
-      for (let p of this.particles) {
-        force.applyTo(p);
+  update(){
+    for (let force of this.forces){
+      for (let obj of this.objects){
+        // obj.applyForce(force);
+        force.applyTo(obj);
       }
     }
 
-    for (let p of this.particles) {
-        p.update();
-        if (p.life <= 0){
-          this.pool.push(p);
-        }
-    }
+    this.objects.forEach((obj)=>{
+      obj.update();
+    });
   }
 
-  draw() {
-    for (let p of this.particles) {
-        p.draw();
-    }
+  draw(){
+    this.objects.forEach((obj)=>{
+      obj.draw();
+    });
   }
 }
 
-class Particle {
-  constructor() {
-    this.position = createVector(0, 0)
-    this.velocity = createVector(0, 0);
-    this.force = createVector(0, 0);
-    this.life = random(50,MAX_AGE)
+class Ball {
+  constructor(x,y, radius, my_color){
+    this.radius = radius;
+    this.color = color(my_color);
+    this.position = createVector(x,y);
+    this.mass = pow(radius,3)*PI*(4/3);
+    this.velocity = createVector(random(-10,10),random(-10,10));
+    this.force = createVector(0,0);
   }
 
-  applyForce(force) {
+  update() {
+    const acceleration = p5.Vector.div(this.force, this.mass);
+    this.force.mult(0);
+    this.velocity.add(acceleration);
+    this.position.add(this.velocity);
+
+    this.velocity.x *= 0.995;
+    
+    if (this.position.x - this.radius < 0 || this.position.x + this.radius >= width){
+      this.velocity.x *= -0.9;
+    }
+    if (this.position.y - this.radius < 0 || this.position.y + this.radius >= height){
+      this.velocity.y *= -0.9;
+    }
+
+    this.position.x = min(width - this.radius, max(this.radius, this.position.x));
+    this.position.y = min(height - this.radius, max(this.radius, this.position.y));
+
+  }
+
+  applyForce(force){
     this.force.add(force);
   }
 
-  update() {
-    if (this.life > 0){
-      // the particle is massless, so we can just use the force as the acceleration
-      this.velocity.add(this.force);
-      this.position.add(this.velocity);
-
-      this.force.x = 0;
-      this.force.y = 0;
-
-      this.life --;
-    }
-  }
-
-  draw() {
-    if (this.life > 0){
-      // fill(256,256*(this.life/200));
-      // circle(this.position.x, this.position.y, 2);
-      image(smoke, this.position.x, this.position.y)
-    }
+  draw(){
+    fill(this.color)
+    noStroke();
+    circle(this.position.x, this.position.y, this.radius*2);
   }
 }
 
-function drawSmoke(g) {
-  g.clear();
-  g.noStroke();
-  let center = createVector(g.width / 2, g.height / 2);
-  for (let x = 0; x < g.width; x++) {
-    for (let y = 0; y < g.height; y++) {
-      let pos = createVector(x, y);
-      let d = dist(pos.x, pos.y, center.x, center.y);
-      let alpha = map(d, 0, g.width / 3, 16, 0, true);
-      g.fill(255, alpha);
-      g.rect(x, y, 1, 1);
-    }
+
+function getAnalogousColors(myColor) {
+  let colors = [];
+  
+  // Calculate the hues of the 6 analogous colors
+  let myHue = hue(myColor);
+  let hues = [];
+  hues.push(myHue - 60);
+  hues.push(myHue - 30);
+  hues.push(myHue - 15);
+  hues.push(myHue + 15);
+  hues.push(myHue + 30);
+  hues.push(myHue + 60);
+  
+  // Normalize the hues to be within the range of 0 to 360
+  for (let i = 0; i < hues.length; i++) {
+    hues[i] = (hues[i] + 360) % 360;
   }
+  
+  // Convert the hues, saturation, and brightness to RGB hex codes
+  for (let i = 0; i < hues.length - 1; i++) {
+    colors.push(color(hues[i], saturation(myColor), brightness(myColor)));
+  }
+  colors.push(color(hues.slice(-1)[0] , saturation(myColor), 50));
+  colors.push(color("#ffffff"));
+
+  return colors;
 }
