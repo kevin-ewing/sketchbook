@@ -20,11 +20,13 @@ let fastTick;
 let slowTick;
 let graphic;
 let x, y;
-let speed = 10;
+let planeSpeed = 5;
+let VelocityX = 0;
+let VelocityY = 0;
+const friction = 0.9;
 
 function setup() {
   createCanvas(800, 800);
-  pixelDensity(2); // increase pixel density
   noStroke();
   fastTick = floor(random(0,1000));
   slowTick = floor(random(0,1000));
@@ -76,9 +78,9 @@ function draw(){
       let cloudValue = noise(x / 100, y / 100 - (fastTick/10));
       if(cloudValue > 0.55 ){
         fill(256,(cloudValue+.2)*256);
+        rect(x, y, PIX_SIZE, PIX_SIZE);
       }
 
-      rect(x, y, PIX_SIZE, PIX_SIZE);
     }
   }
   fastTick += 1;
@@ -89,22 +91,58 @@ function draw(){
 
   image(graphic, x, y);
 
+  fill(color(random(240,256)));
+  let propWidth = random(20, 50)
+  rect(x - (propWidth/2),y - 57.5, propWidth, 5);
+
   if (keyIsDown(LEFT_ARROW)) {
-    x -= speed;
+    VelocityX -= planeSpeed;
+  }
+  if (keyIsDown(RIGHT_ARROW)) {
+    VelocityX += planeSpeed;
+  }
+  if (keyIsDown(UP_ARROW)) {
+    VelocityY -= planeSpeed;
+  }
+  if (keyIsDown(DOWN_ARROW)) {
+    VelocityY += planeSpeed;
+  }
+
+  VelocityX *= friction;
+  VelocityY *= friction;
+  x += VelocityX;
+  y += VelocityY;
+
+  x = constrain(x, 0 + graphic.width, width - graphic.width);
+  y = constrain(y, 0 + graphic.height, height - graphic.height);
+
+  if (keyIsDown(LEFT_ARROW)) {
+    x -= planeSpeed;
     x = constrain(x , 0 + graphic.width, width - graphic.width);
   } else if (keyIsDown(RIGHT_ARROW)) {
-    x += speed;
+    x += planeSpeed;
     x = constrain(x, 0 + graphic.width, width - graphic.width);
   }
 
   if (keyIsDown(UP_ARROW)) {
-    y -= speed;
+    y -= planeSpeed;
     y = constrain(y, 0 + graphic.height, height - graphic.height);
   } else if (keyIsDown(DOWN_ARROW)) {
-    y += speed;
+    y += planeSpeed;
     y = constrain(y, 0 + graphic.height, height - graphic.height);
   }
 
+
+  for (let x = 0; x < width; x += PIX_SIZE) { // draw rectangles instead of individual pixels
+    for (let y = 0; y < height; y += PIX_SIZE) {
+      noiseDetail(1, 0.5);
+        let highCloudValue = noise(x / 130, y / 130 - (fastTick/5));
+        if(highCloudValue > 0.4 ){
+          fill(256,(highCloudValue+.1)*256);
+          rect(x, y, PIX_SIZE, PIX_SIZE);
+      }
+    }
+  }
 }
 
 function drawPlane(){
@@ -137,10 +175,10 @@ function drawPlane(){
   graphic.rect(50,25,5,80);
   graphic.fill("#bcbdbe");
   graphic.rect(45,0,10,5);
-  graphic.fill("#f2f2f2");
-  graphic.rect(25,5,50,5);
-  graphic.fill("#e7e7e5");
-  graphic.rect(35,5,30,5);
+  // graphic.fill("#f2f2f2");
+  // graphic.rect(25,5,50,5);
+  // graphic.fill("#e7e7e5");
+  // graphic.rect(35,5,30,5);
   graphic.fill("#ec6a56");
   graphic.rect(45,55,5,10);
   graphic.fill("#f6e4b1");
