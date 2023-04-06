@@ -1,27 +1,18 @@
-//https://en.wikipedia.org/wiki/Double_pendulum
+// https://en.wikipedia.org/wiki/Double_pendulum
+// https://www.myphysicslab.com/pendulum/double-pendulum-en.html
+// https://www.youtube.com/watch?v=tc2ah-KnDXw
 
 const MAS_MIN = 4;
 const MAS_MAX = 20;
 const BG_ALPHA = 4;
 
 let SHOW_MECH = false;
-let tail_length = 500;
-
-let l1; // Length of the first pendulum
-let l2; // Length of the second pendulum
-let m1; // Mass of the first pendulum
-let m2; // Mass of the second pendulum
-let theta1 = 0; // Starting angle of the first pendulum
-let theta2 = 0; // Starting angle of the second pendulum
-let omega1 = 0; // Starting angular velocity of the first pendulum
-let omega2 = 0; // Starting angular velocity of the second pendulum
-let centerX;
-let centerY;
-let hue;
+let MAX_TAIL_LENGTH = 200;
+let NUM_PENDS = 3;
 
 let gravity = .2;
 
-let points = [];
+let system;
 
 function setup() {
   createCanvas(800, 800);
@@ -30,86 +21,157 @@ function setup() {
   centerX = width / 2; 
   centerY = width / 2;
 
-  hue = random(0,100);
-  l1 = random(100, 300);
-  l2 = (width/2) - l1 - 10;
-  m1 = random(MAS_MIN, MAS_MAX);
-  m2 = random(MAS_MIN, MAS_MAX);
-  theta1 = PI + random(-0.001, 0.001);
-  theta2 = PI + random(-0.001, 0.001);
+  system = new System();
+
+  let pend;
+
+  for (let x = 0; x < NUM_PENDS; x++){
+    pend =  new Pendulum();
+    system.addObject(pend);
+  }
 
 }
 
 function draw() {
   translate(centerX, centerY);
-
-  let num1 = -gravity  * (2 * m1 + m2) * sin(theta1);
-  let num2 = -m2 * gravity  * sin(theta1 - 2 * theta2);
-  let num3 = -2 * sin(theta1 - theta2) * m2;
-  let num4 = pow(omega2,2) * l2 + pow(omega1,2) * l1 * cos(theta1 - theta2);
-  let den = l1 * (2 * m1 + m2 - m2 * cos(2 * theta1 - 2 * theta2));
-  let a1a = (num1 + num2 + num3 * num4) / den;
-
-  num1 = 2 * sin(theta1 - theta2);
-  num2 = pow(omega1, 2) * l1 * (m1 + m2);
-  num3 = gravity * (m1 + m2) * cos(theta1);
-  num4 = pow(omega2, 2) * l2 * m2 * cos(theta1 - theta2);
-  den = l2 * (2 * m1 + m2 - m2 * cos(2 * theta1 - 2 * theta2));
-  let a2a = (num1 * (num2 + num3 + num4)) / den;
-
-  let x1 = l1 * sin(theta1);
-  let y1 = l1 * cos(theta1);
-
-  let x2 = x1 + l2 * sin(theta2);
-  let y2 = y1 + l2 * cos(theta2);
-
   if (SHOW_MECH){
     background(256);
-    strokeWeight(3);
-    fill(0);
-    ellipse(0, 0, 10);
-    line(0, 0, x1, y1);
-    line(x1, y1, x2, y2);
-    fill(256);
-    ellipse(x1, y1, m1);
-    ellipse(x1, y1, m1);
-    ellipse(x2, y2, m2);
-    noFill()
-    strokeWeight(6)
-    rect(-centerX, -centerY, width, height);
-
-    if (gravity > 0){
-      drawArrow(true);
-    }
-    else{
-      drawArrow(false);
-    }
-  }
-  else{
-    background(0, BG_ALPHA);
   }
 
-  omega1 += a1a;
-  omega2 += a2a;
-  theta1 += omega1;
-  theta2 += omega2;
-
-  if (points.length >= tail_length){
-    points.shift();
-  }
-
-  points.push(createVector(x2, y2));
-
-  drawCurveFormatter(points)
+  system.update();
 }
 
-function drawCurveFormatter(points) {
+class System {
+  pendulums = []
+
+  addObject(obj){
+    this.pendulums.push(obj);
+  }
+
+  update(){
+    for (let pend of this.pendulums){
+      pend.update();
+    }
+  }
+
+  reset(){
+    for (let pend of this.pendulums){
+      pend.reset();
+    }
+  }
+}
+
+
+class Pendulum {
+  points = [];
+
+  constructor() {
+    this.hue = random(0,100); 
+    this.l1 = random(100, 300); // Length of the first pendulum
+    this.l2 = (width/2) - this.l1 - 10; // Length of the second pendulum
+    this.m1 = random(MAS_MIN, MAS_MAX); // Mass of the first pendulum
+    this.m2 = random(MAS_MIN, MAS_MAX); // Mass of the second pendulum
+    this.theta1 = PI + random(-0.001, 0.001); // Starting angle of the first pendulum
+    this.theta2 = PI + random(-0.001, 0.001); // Starting angle of the second pendulum
+    this.omega1 = 0; // Starting angular velocity of the first pendulum
+    this.omega2 = 0; // Starting angular velocity of the second pendulum
+    this.points = [];
+  }
+
+  update(){
+    let num1 = -gravity  * (2 * this.m1 + this.m2) * sin(this.theta1);
+    let num2 = -this.m2 * gravity  * sin(this.theta1 - 2 * this.theta2);
+    let num3 = -2 * sin(this.theta1 - this.theta2) * this.m2;
+    let num4 = pow(this.omega2,2) * this.l2 + pow(this.omega1,2) * this.l1 * cos(this.theta1 - this.theta2);
+    let den = this.l1 * (2 * this.m1 + this.m2 - this.m2 * cos(2 * this.theta1 - 2 * this.theta2));
+    let a1a = (num1 + num2 + num3 * num4) / den;
+  
+    num1 = 2 * sin(this.theta1 - this.theta2);
+    num2 = pow(this.omega1, 2) * this.l1 * (this.m1 + this.m2);
+    num3 = gravity * (this.m1 + this.m2) * cos(this.theta1);
+    num4 = pow(this.omega2, 2) * this.l2 * this.m2 * cos(this.theta1 - this.theta2);
+    den = this.l2 * (2 * this.m1 + this.m2 - this.m2 * cos(2 * this.theta1 - 2 * this.theta2));
+    let a2a = (num1 * (num2 + num3 + num4)) / den;
+  
+    let x1 = this.l1 * sin(this.theta1);
+    let y1 = this.l1 * cos(this.theta1);
+  
+    let x2 = x1 + this.l2 * sin(this.theta2);
+    let y2 = y1 + this.l2 * cos(this.theta2);
+
+
+    if (SHOW_MECH){
+      strokeWeight(3);
+      fill(0);
+      ellipse(0, 0, 10);
+      line(0, 0, x1, y1);
+      line(x1, y1, x2, y2);
+      fill(256);
+      ellipse(x1, y1, this.m1);
+      ellipse(x1, y1, this.m1);
+      ellipse(x2, y2, this.m2);
+      noFill()
+      strokeWeight(6)
+      rect(-centerX, -centerY, width, height);
+
+      if (gravity > 0){
+        drawArrow(true);
+      }
+      else{
+        drawArrow(false);
+      }
+    }
+    else{
+      background(0, BG_ALPHA);
+    }
+
+    this.omega1 += a1a;
+    this.omega2 += a2a;
+    this.theta1 += this.omega1;
+    this.theta2 += this.omega2;
+
+    if (this.points.length >= MAX_TAIL_LENGTH){
+      this.points.shift();
+    }
+
+    this.points.push(createVector(x2, y2));
+
+    this.hue += 0.01;
+    if (this.hue >= 100) {
+      this.hue = 0;
+    }
+
+    drawCurveFormatter(this.points, this.hue);
+  }
+
+  reset() {
+    this.points = [];
+    this.l1 = random(100, 300);
+    this.l2 = (width/2) - this.l1 - 10;
+    this.m1 = random(MAS_MIN, MAS_MAX);
+    this.m2 = random(MAS_MIN, MAS_MAX);
+    this.theta1 = PI + random(-0.001, 0.001);
+    this.theta2 = PI + random(-0.001, 0.001);
+    this.hue = random(0,100);
+
+    // Reset angular velocity of the pendulums
+    this.omega1 = 0;
+    this.omega2 = 0;
+
+    gravity = abs(gravity);
+  }
+}
+
+
+function drawCurveFormatter(points, temp_hue) {
   if (SHOW_MECH){
-    strokeCap(round);
+    strokeCap(ROUND);
+    stroke(0);
     noFill();
     strokeWeight(3);
-    stroke(0);
+    stroke(temp_hue, 100, 100);
     drawCurve(points);
+    stroke(0);
   }
   else {
     strokeCap(SQUARE);
@@ -120,7 +182,6 @@ function drawCurveFormatter(points) {
     else{
       tip = points[points.length - 1];
     }
-    let temp_hue = fadingHue();
     fill(temp_hue, 100, 100);
     noStroke();
     ellipse(tip.x, tip.y , 10);
@@ -152,6 +213,7 @@ function drawCurve(points){
   endShape();
 }
 
+
 function keyTyped(){
   if (key === 'v'){
     if (SHOW_MECH){
@@ -164,39 +226,18 @@ function keyTyped(){
     }
   }
   if (key === 'r'){
-    points = [];
-    l1 = random(100, 300);
-    l2 = (width/2) - l1 - 10;
-    m1 = random(MAS_MIN, MAS_MAX);
-    m2 = random(MAS_MIN, MAS_MAX);
-    theta1 = PI + random(-0.001, 0.001);
-    theta2 = PI + random(-0.001, 0.001);
-    hue = random(0,100);
-
-    // Reset angular velocity of the pendulums
-    omega1 = 0;
-    omega2 = 0;
-
-    gravity = abs(gravity);
+    system.reset();
   }
   if (key === 'f'){
     gravity *= -1;
   }
 }
 
-function fadingHue() {
-  hue += 0.01;
-  if (hue >= 100) {
-    hue = 0;
-  }
-  return hue;
-}
 
 function drawArrow(isUp) {
   let arrowSize = 18;
   
   push()
-
   fill(0);
   stroke(3);
   translate(-centerX + 20 , -centerY + 20);
