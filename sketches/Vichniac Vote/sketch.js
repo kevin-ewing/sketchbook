@@ -4,7 +4,7 @@ const canvasHeight = 800;
 const cellColor = [256, 0, 0];
 
 // set up grid size and cell size
-const gridSize = 400;
+const gridSize = 200;
 const cellSize = canvasWidth / gridSize;
 
 // initialize the grid with random values
@@ -33,7 +33,6 @@ function setup() {
   // set the background color
   noStroke();
   drawGrid();
-  frameRate(2);
 }
 
 function draw() {
@@ -57,7 +56,18 @@ function updateGrid() {
     for (let j = 0; j < gridSize; j++) {
       // get the neighbors of the cell
       let vote = getNeighborsVote(i, j);
-      newGrid[i][j] = vote;
+
+      if (grid[i][j] != vote){
+        if (random() < 0.01){
+          newGrid[i][j] = grid[i][j];
+        }
+        else {
+          newGrid[i][j] = vote;
+        }
+      }
+      else{
+        newGrid[i][j] = vote;
+      }
     }
   }
 
