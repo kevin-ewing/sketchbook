@@ -56,5 +56,6 @@ function sortPixels() {
     img.set(x, y, colorTwo);
     img.set(x + dis, y, colorOne);
   }
+
 }
 
