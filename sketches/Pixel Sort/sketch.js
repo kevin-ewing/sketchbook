@@ -2,7 +2,7 @@ let img;
 let sorted = false;
 
 function preload() {
-  let url = "https://source.unsplash.com/random/600x600?nature";
+  let url = "https://source.unsplash.com/random/?nature";
   img = loadImage(url);
 }
 
