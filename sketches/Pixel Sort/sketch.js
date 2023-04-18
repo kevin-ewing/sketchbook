@@ -34,24 +34,17 @@ function draw() {
 }
 
 function sortPixels() {
-  // Get a random pixel.
   const x = random(img.width);
   const y = random(img.height - 1);
   let dis = random(1,10);
 
-  // Get the color of the pixel.
   const colorOne = img.get(x, y);
 
-  // Get the color of the pixel below the first one.
   const colorTwo = img.get(x + dis,y);
 
-  // Get the total R+G+B of both colors.
   const totalOne = red(colorOne) + green(colorOne) + blue(colorTwo);
   const totalTwo = red(colorTwo) + green(colorTwo) + blue(colorTwo);
 
-  // If the first total is less than the second total, swap the pixels.
-  // This causes darker colors to fall to the bottom,
-  // and light pixels to rise to the top.
   if (totalOne < totalTwo) {
     img.set(x, y, colorTwo);
     img.set(x + dis, y, colorOne);
