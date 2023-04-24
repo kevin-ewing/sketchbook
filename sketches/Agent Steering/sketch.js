@@ -1,11 +1,12 @@
-const NUM_AGENTS = 2000;
+const NUM_AGENTS = 200;
 let isMousePressed = false;
 
 let agents = new Array(NUM_AGENTS);
 
 function setup() {
-  createCanvas(700, 700);
+  createCanvas(1000, 1000);
   ellipseMode(CENTER);
+  background(255);
   colorMode(HSB,100);
 
   for (let i = 0; i < NUM_AGENTS; i ++){
@@ -23,9 +24,23 @@ function draw() {
   rect(0,0,width,height);
   pop();
 
+
   for (let i = 0; i < NUM_AGENTS; i ++){
     agents[i].update();
     agents[i].draw();
+  }
+
+  let pixelColor = get(mouseX, mouseY);
+  
+  // check if the pixel color is not white and stop looping if it isn't
+  if (pixelColor[0] == 255 || pixelColor[0] == 0) {
+  }
+  else {
+    textSize(100);
+    textAlign(CENTER, CENTER);
+    // Display the "game over" text in the center of the screen
+    text("Game Over", width/2, height/2);
+    noLoop();
   }
 }
 
