@@ -6,18 +6,19 @@ const NOISE_DIFF = 13;
 let NOISE_SIZE;
 
 
-let cols = 100; // number of columns
-let rows = 130; // number of rows
-let hexSize = 5; // size of each hexagon
+let cols = 97; // number of columns
+let rows = 70; // number of rows
+let hexSize = 10; // size of each hexagon
 let xOffset = hexSize * 1.65; // distance between rows
 let yOffset = hexSize * Math.sqrt(2); // distance between columns
 
 let BG_COLOR;
 let COLOR_ARRAY;
 let MAIN_COLOR;
+let COLOR_NOISE_OFFSET;
 
 function setup() {
-  createCanvas(800, 800);
+  createCanvas(1600, 1000);
   noStroke();
   angleMode(DEGREES);
   colorMode(HSB,360);
@@ -25,6 +26,7 @@ function setup() {
   MAIN_COLOR = color(random(0,360),200,300);
   COLOR_ARRAY = getAnalogousColors(MAIN_COLOR);
   BG_COLOR = color(hue(MAIN_COLOR),100,100);
+  COLOR_NOISE_OFFSET = [random(-100000,100000),random(-100000,100000)];
   background(BG_COLOR);
   noLoop();
 }
@@ -37,9 +39,9 @@ function draw() {
     for (let j = 0; j < cols; j++) {
       let x = j * xOffset + (i % 2) * xOffset / 2;
       let y = i * yOffset;
-      let sizeQuot = constrain(noise(i / NOISE_SIZE, j / NOISE_SIZE) * 1.4, 0, 1); // use noise to determine size
-      let colorQuot = constrain(floor(sizeQuot * 7) - 1 + randomNormal(), 0, COLOR_ARRAY.length - 1);
-      drawHexagon(x, y, sizeQuot * hexSize, COLOR_ARRAY[colorQuot]);
+      let sizeQuot = constrain(noise(i / NOISE_SIZE, j / NOISE_SIZE) * 1.4, 0, 1) * hexSize; // use noise to determine size
+      let colorQuot = constrain(floor(constrain(noise(i / NOISE_SIZE + COLOR_NOISE_OFFSET[0], j / NOISE_SIZE + COLOR_NOISE_OFFSET[1]) * 1.4, 0, 1) * 7) - 1 + randomNormal(), 0, COLOR_ARRAY.length - 1);
+      drawHexagon(x, y, sizeQuot, COLOR_ARRAY[colorQuot]);
     }
   }
 
