@@ -95,9 +95,6 @@ function checkValid(arr, valid) {
 }
 
 
-
-
-
 function draw() {
 
     drawGrid();
