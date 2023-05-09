@@ -1,11 +1,19 @@
 const CANVAS_WIDTH = 1400;
 const CANVAS_HEIGHT = 800;
 
-const TYPES_ANTS = 2;
 
+let resetButton;
+let backgroundAlpha = 10;
+let alphaSlider;
+let antsSlider;
+let typeSelector;
+let startSelector;
+
+let startType = 'Circle'
+let antTypes = 1;
 let antsSystems = [];
 let pheromoneArray = [];
-const antsNum = 20000;
+let antsNum = 20000;
 const lookAhead = 10;
 const turnAngle = 20;
 
@@ -22,16 +30,78 @@ function setup() {
   pixelDensity(1);
   background(0);
 
-  let colorPalette = genPal(TYPES_ANTS);
 
-  for (let i = 0; i < TYPES_ANTS;  i ++) {
+  // create the button
+  resetButton = createButton('Apply Changes');
+  resetButton.position(width - 115, height + 15);
+  
+  // set the button's event handler
+  resetButton.mousePressed(resetAnts);
+
+
+  alphaSlider = createSlider(10, 100, 10);
+  alphaSlider.position(width - 340, height + 20);
+  alphaSlider.style('width', '200px');
+  alphaSlider.style('background-color', 'black');
+  alphaSlider.style('color', 'white');
+
+  // create the title
+  let alphaTitle = createDiv('Background Alpha');
+  alphaTitle.position(width - 300, height + 40);
+
+
+  antsSlider = createSlider(5000, 40000, 10000);
+  antsSlider.position(width - 600, height + 20);
+  antsSlider.style('width', '200px');
+  antsSlider.style('background-color', 'black');
+  antsSlider.style('color', 'white');
+  
+
+  // create the title
+  let antsTitle = createDiv('Ant Count');
+  antsTitle.position(width - 520, height + 40);
+
+
+
+  // create the select element
+  typeSelector = createSelect();
+  typeSelector.option(1);
+  typeSelector.option(2);
+  typeSelector.option(3);
+  typeSelector.option(4);
+  typeSelector.position(width - 780, height + 20);
+  typeSelector.style('width', '100px');
+  
+  // create the title
+  let typeTitle = createDiv('Ant Types');
+  typeTitle.position(width - 770, height + 40);
+
+
+    // create the select element
+    startSelector = createSelect();
+    startSelector.option('Circle');
+    startSelector.option('Random');
+    startSelector.position(width - 980, height + 20);
+    startSelector.style('width', '100px');
+
+    let startTitle = createDiv('Start Position');
+    startTitle.position(width - 975, height + 40);
+
+
+
+  let colorPalette = genPal(antTypes);
+
+  for (let i = 0; i < antTypes;  i ++) {
     antsSystems.push(new System(i, colorPalette[i]));
   }
 
 }
 
 function draw() {
-  background(0,7); // Update viewing trail
+  // draw the value of the slider
+
+  blendMode(MULTIPLY);
+  background(0,backgroundAlpha); // Update viewing trail
 
   loadPixels();
   for (const system of antsSystems) {
@@ -46,17 +116,21 @@ class Ant {
   constructor(antIndex, color) {
     this.antIndex = antIndex;
     this.color = color;
-    let radius = min(width, height) * 0.5;
-    let angle = random(360);
-    this.x = (width / 2) + (radius * cos(angle));
-    this.y = (height / 2) + (radius * sin(angle));
-    this.angle = angle + 180;
-    this.step = random(.5, 1);
 
-    // this.x = random(width);
-    // this.y = random(height);
-    // this.angle = random(360);
-    // this.step = random(1,2);
+    if (startType === 'Circle'){
+      let radius = min(width, height) * 0.45;
+      let angle = random(360);
+      this.x = (width / 2) + (radius * cos(angle));
+      this.y = (height / 2) + (radius * sin(angle));
+      this.angle = angle + 180;
+      this.step = random(.5, 1);
+    }
+    else{
+      this.x = random(width);
+      this.y = random(height);
+      this.angle = random(360);
+      this.step = random(1,2);
+    }
   }
 
   smell(direction) {
@@ -67,7 +141,7 @@ class Ant {
     y = (y + height) % height;
     
     let enemy = 0;
-    for (let k = 0; k < TYPES_ANTS; k ++){
+    for (let k = 0; k < antTypes; k ++){
       if (k != this.antIndex){
         enemy -= pheromoneArray[k][y][x];
       }
@@ -107,7 +181,7 @@ class System {
   constructor(antIndex, color) {
     this.antIndex = antIndex;
     this.ants = [];
-    for (let i = antsNum/TYPES_ANTS; i--;) {
+    for (let i = floor(antsNum/antTypes); i--;) {
       this.ants.push(new Ant(this.antIndex, color));
     }
 
@@ -150,7 +224,7 @@ class System {
 
 function genPal(n){
   let palette = [];
-  let span = 90;
+  let span = 60*n;
   let base = random(0,360);
   colorMode(HSB);
 
@@ -163,4 +237,20 @@ function genPal(n){
 
   colorMode(RGB);
   return palette;
+}
+
+function resetAnts(){
+  background(0);
+  antsSystems = [];
+  pheromoneArray = [];
+  backgroundAlpha = alphaSlider.value();
+  antsNum = antsSlider.value();
+  antTypes = typeSelector.value();
+  startType = startSelector.value();
+
+  let colorPalette = genPal(antTypes);
+
+  for (let i = 0; i < antTypes;  i ++) {
+    antsSystems.push(new System(i, colorPalette[i]));
+  }
 }
