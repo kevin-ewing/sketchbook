@@ -18,7 +18,7 @@ function setup() {
   MAIN_COLOR = color(random(0,360),200,300);
   COLOR_ARRAY = getAnalogousColors(MAIN_COLOR);
   BG_COLOR = color(hue(MAIN_COLOR),100,200);
-  // noLoop()
+  noLoop()
 }
 
 function draw() {

@@ -7,9 +7,9 @@ let shadow;
 
 function preload() {
   // Specify the path to your SF Pro font file
-  sfProFont = loadFont('./SF-Pro.ttf');
-  sfProFontBold = loadFont('./SF-Pro-Text-Bold.otf');
-  backgroundImage = loadImage('./Monterey_Graphic.jpg');
+  sfProFont = loadFont('https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts/raw/master/SF-Pro.ttf');
+  sfProFontBold = loadFont('https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts/raw/master/SF-Pro-Text-Bold.otf');
+  backgroundImage = loadImage('./resources/Monterey_Graphic.jpg');
 }
 
 function setup() {
