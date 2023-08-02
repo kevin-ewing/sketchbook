@@ -1,53 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Kevin's Sketchbook</title>
   <link rel="icon" type="image/x-icon" href="./resources/favicon.ico">
   <link rel="stylesheet" type="text/css" href="sketchbook.css">
 </head>
+
 <body>
-  <h1>Kevin's Sketchbook</h1>
-  <hr />
-  <div id="sketches">
-  
+  <div id="main">
+    <h1>Kevin's Sketchbook</h1>
+    <hr />
+    <div class="vertical-line"></div>
+    <div id="sketches">
+      <table>
+        <tbody id="sketch-table">
+        </tbody>
+      </table>
+    </div>
+    <script type="text/javascript">
+      const loadSketches = async () => {
+        const response = await fetch("sketches.json");
+        const data = await response.json();
 
-    <table>
-      <tbody id="sketch-table">
-      </tbody>
-    </table>
+        // should sort the sketches by date
+        data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        const table = document.getElementById('sketch-table');
+        data.forEach((sketch, index) => {
+          const link = document.createElement('a');
+          link.href = `sketches/${sketch.name}`;
+          link.innerHTML = sketch.name;
+
+          const row = document.createElement('tr');
+          let cell = document.createElement('td');
+          cell.className = 'name';
+          cell.appendChild(link);
+          row.appendChild(cell);
+
+          cell = document.createElement('td');
+          cell.className = 'date';
+          cell.innerHTML = sketch.date;
+          row.appendChild(cell);
+
+          table.appendChild(row);
+
+          const hr = document.createElement('hr');
+          hr.className = 'my-horizontal-rule'; // Replace 'my-horizontal-rule' with your desired CSS class name
+          table.appendChild(hr);
+        })
+      };
+
+      loadSketches();
+
+    </script>
   </div>
-  <script type="text/javascript">
-
-    const loadSketches = async()=>{
-      const response = await fetch("sketches.json");
-      const data = await response.json();
-
-// should sort the sketches by date
-
-      const table = document.getElementById('sketch-table');
-      data.forEach((sketch)=>{
-        const link = document.createElement('a');
-        link.href = `sketches/${sketch.name}`;
-        link.innerHTML = sketch.name;
-
-        const row = document.createElement('tr');
-        let cell = document.createElement('td');
-        cell.className = 'name';
-        cell.appendChild(link);
-        row.appendChild(cell);
-
-        cell = document.createElement('td');
-        cell.className = 'date';
-        cell.innerHTML = sketch.date;
-        row.appendChild(cell);
-        table.appendChild(row);
-      })
-    };
-  
-    loadSketches();
-  
-
-  </script>
 </body>
+
 </html>

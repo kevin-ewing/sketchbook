@@ -1,19 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Fira+Code&family=Roboto&family=Rozha+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&family=Reenie+Beanie&family=Rock+Salt&display=swap');
 
-
-body {
-  width: 500px;
-  margin: 0 auto;
+#main {
+  width: 700px;
   padding: 0;
+  padding-bottom: 3rem;
+  padding-left: 20%;
   background-image: url("./resources/background.png");
-  background-repeat: repeat;
+  background-repeat: repeat;  
 }
 
 
 h1 {
-  font-family: 'Rozha One', serif;
+  font-family: 'Rock Salt', cursive;
   font-size: 80px;
-  line-height: 70px
+  line-height: 90px;
+  margin-bottom:1rem;
+  color: #474a54;
 }
 
 #sketches table {
@@ -21,28 +23,59 @@ h1 {
 }
 
 hr {
-  border: none;
-  width: 100%;;
-  height: 2px;
-  /* Set the hr color */
-  color: #333; /* old IE */
-  background-color: #333; /* Modern Browsers */
+  width: 100%; /* Span the entire width of the container */
+  height: 2px; /* Set the height for the horizontal rule */
+  margin: 0; /* Remove any margins */
+  padding: 0; /* Remove any paddings */
+  border: none; /* Remove any border */
+  background-color: #A7C7E7; /* Change the background color to style the line (You can change this to your preferred color) */
+  position: absolute;
+  left: 0;
+  right: 0;
 }
 
 
 #sketches .name{
-  font-family: 'Roboto', sans-serif;
-  font-weight: bold;
-  font-size: larger;
+  font-family: 'Gloria Hallelujah', cursive;
+  font-size: 26px;
+  line-height: 28px;
+  z-index: 9999;
 }
 
-#sketches .name a{
-  color:#d67a56;
+#sketches .name a {
+  color: #474a54; /* Default link color */
   text-decoration: none;
 }
 
+#sketches .name a:hover {
+  color: #c23b22; /* Link color on hover */
+}
 #sketches .date{
-  font-family: 'Fira Code', monospace;
-  font-size: 90%;
-  text-align:right;
+  font-family: 'Reenie Beanie', cursive;
+  font-size: 30px;
+  text-align: right;
+  color: #474a54;
+}
+
+.my-horizontal-rule {
+  width: 100%; /* Span the entire width of the container */
+  height: 1px; /* Set the height for the horizontal rule */
+  margin: 0; /* Remove any margins */
+  padding: 0; /* Remove any paddings */
+  border: none; /* Remove any border */
+  background-color: #A7C7E7; /* Change the background color to style the line (You can change this to your preferred color) */
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.vertical-line {
+  width: 2px; /* Set the width of the vertical line */
+  height: 100vh; /* Set the height of the vertical line to be the full height of the viewport */
+  background-color: #c23b22; /* Change the background color to style the vertical line (You can change this to your preferred color) */
+  position: fixed;
+  top: 0;
+  left: 19%; /* Position the line in the middle of the page */
+  transform: translateX(-50%); /* Center the line horizontally */
+  z-index: 9999; /* Make sure the line is on top of other elements */
 }
