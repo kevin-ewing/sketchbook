@@ -1,5 +1,5 @@
 const NOISE_DIFF = 20;
-const NOISE_DF = 2;
+const NOISE_DF = 1;
 
 function setup() {
   createCanvas(600, 900);
@@ -138,8 +138,8 @@ function addNoise() {
           let index = 4 * (i * d + di + (j * d + dj) * width * d);
 
           // Find a random neighboring pixel with normal distribution
-          let randX = int(randomGaussian(0, 3)); // standard deviation of 3
-          let randY = int(randomGaussian(0, 3)); // standard deviation of 3
+          let randX = int(randomGaussian(0, NOISE_DF)); // standard deviation of 3
+          let randY = int(randomGaussian(0, NOISE_DF)); // standard deviation of 3
 
           // Calculate the neighboring pixel coordinates
           let neighborX = constrain(i + randX, 0, width - 1);
