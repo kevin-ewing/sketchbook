@@ -2,6 +2,7 @@ const NOISE_DIFF = 20;
 
 function setup() {
   createCanvas(600, 900);
+  pixelDensity(2);
   noLoop();
 }
 
