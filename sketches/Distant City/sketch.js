@@ -70,7 +70,7 @@ function draw() {
     }
     noStroke();
     let col = circleColors[i % circleColors.length]; // Cycle through the colors
-    fill(col + "80"); // Adding alpha for transparency
+    fill(col + str(floor(random(40, 70)))); // Adding alpha for transparency
     ellipse(random(width), x, 20);
   }
 

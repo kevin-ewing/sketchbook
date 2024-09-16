@@ -1,3 +1,6 @@
+const NOISE_DIFF = 20;
+const NOISE_DF = 2;
+
 function setup() {
   createCanvas(600, 900);
   pixelDensity(2);
@@ -119,15 +122,61 @@ function drawStadium(pg, x, y, w, h) {
 
 // Existing addNoise function
 function addNoise() {
-  // Define the noise intensity
-  const NOISE_DIFF = 25;
-
+  // Add noise to the image
   loadPixels();
-  for (let i = 0; i < pixels.length; i += 4) {
-    // Add random noise to each color channel
-    pixels[i] += random(-NOISE_DIFF, NOISE_DIFF); // Red
-    pixels[i + 1] += random(-NOISE_DIFF, NOISE_DIFF); // Green
-    pixels[i + 2] += random(-NOISE_DIFF, NOISE_DIFF); // Blue
+
+  // Get the pixel density factor
+  let d = pixelDensity();
+  let totalPixels = 4 * width * height * d * d;
+
+  // First, swap pixels using normal distribution
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      for (let di = 0; di < d; di++) {
+        for (let dj = 0; dj < d; dj++) {
+          // Calculate the current pixel index
+          let index = 4 * (i * d + di + (j * d + dj) * width * d);
+
+          // Find a random neighboring pixel with normal distribution
+          let randX = int(randomGaussian(0, 3)); // standard deviation of 3
+          let randY = int(randomGaussian(0, 3)); // standard deviation of 3
+
+          // Calculate the neighboring pixel coordinates
+          let neighborX = constrain(i + randX, 0, width - 1);
+          let neighborY = constrain(j + randY, 0, height - 1);
+
+          // Find the corresponding index for the neighboring pixel
+          let neighborIndex =
+            4 * (neighborX * d + di + (neighborY * d + dj) * width * d);
+
+          // Swap the pixels
+          for (let k = 0; k < 4; k++) {
+            // iterate through RGBA
+            let temp = pixels[index + k];
+            pixels[index + k] = pixels[neighborIndex + k];
+            pixels[neighborIndex + k] = temp;
+          }
+        }
+      }
+    }
   }
+
+  // Second, add random color value noise to the image
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      for (let di = 0; di < d; di++) {
+        for (let dj = 0; dj < d; dj++) {
+          // Calculate the current pixel index
+          let index = 4 * (i * d + di + (j * d + dj) * width * d);
+
+          // Add noise to the color values
+          pixels[index] += random(-NOISE_DIFF, NOISE_DIFF); // Red
+          pixels[index + 1] += random(-NOISE_DIFF, NOISE_DIFF); // Green
+          pixels[index + 2] += random(-NOISE_DIFF, NOISE_DIFF); // Blue
+        }
+      }
+    }
+  }
+
   updatePixels();
 }
