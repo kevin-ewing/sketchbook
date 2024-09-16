@@ -54,6 +54,10 @@ function draw() {
     "#e94e00",
     "#e6ad00",
     "#ffcd00",
+    "#ffcd00",
+    "#ffcd00",
+    "#ffcd00",
+    "#ffcd00",
   ];
 
   // Add 100 circles using predefined colors
