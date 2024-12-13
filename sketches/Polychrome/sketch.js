@@ -8,12 +8,12 @@ let COLORS = [
   "#ff8142",
   "#ffda45",
   "#3368dc",
-  "#49e7ec",
+  "#49ec9d",
 ];
 
 function setup() {
   createCanvas(600, 900);
-  pixelDensity(2);
+  pixelDensity(4);
   noStroke();
   noLoop();
 }
