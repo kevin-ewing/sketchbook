@@ -1,5 +1,15 @@
 const NOISE_DIFF = 20;
 const NOISE_DF = 1;
+let COLORS = [
+  [285, 82, 33], // #2b0f54
+  [333, 84, 67], // #ab1f65
+  [350, 69, 100], // #ff4f69
+  [0, 3, 97], // #fff7f8
+  [22, 74, 100], // #ff8142
+  [50, 73, 100], // #ffda45
+  [225, 81, 86], // #3368dc
+  [183, 81, 92], // #49e7ec
+];
 
 function setup() {
   createCanvas(600, 900);
@@ -10,6 +20,7 @@ function setup() {
 function draw() {
   background(255);
   colorMode(HSB);
+
   // Define the number of stadiums and the spacing between them
   let numStadiums = 7;
   let spacing = 30; // Spacing between stadiums
@@ -26,7 +37,7 @@ function draw() {
     let h = initialHeight - i * 2 * spacing;
 
     // Adjust position if needed (in this case, the stadiums are centered)
-    let numColors = 7; // Number of colors in the gradient
+    let numColors = 3; // Number of colors in the gradient
 
     drawGradientStadium(x, y, w, h, numColors);
   }
@@ -47,13 +58,15 @@ function drawGradientStadium(x, y, stadiumWidth, stadiumHeight, numColors) {
   // Create a gradient with multiple randomly generated colors
   let gradientGraphics = createGraphics(width, height);
 
-  // Generate random colors for the gradient
-  let baseColorHue = random(255);
   let colors = [];
+  let baseColor = color(random(COLORS)); // Pick a random base color
+
   for (let i = 0; i < numColors; i++) {
-    colors.push(
-      color(baseColorHue + random(-60, 60), random(60, 100), random(60, 85))
-    );
+    let h = hue(baseColor); // Keep the hue of the base color
+    let s = saturation(baseColor); // Keep the saturation of the base color
+    let b = brightness(baseColor) * random(0.5, 1.5); // Randomly alter the brightness
+    b = constrain(b, 0, 100); // Ensure brightness stays within bounds
+    colors.push(color(h, s, b)); // Add the modified color to the gradient
   }
 
   // Draw the gradient vertically
