@@ -8,12 +8,12 @@ let COLORS = [
   "#ff8142",
   "#ffda45",
   "#3368dc",
-  "#49ec9d",
+  "#49d9ec",
 ];
 
 function setup() {
-  createCanvas(600, 900);
-  pixelDensity(4);
+  createCanvas(1000, 1259);
+  pixelDensity(2);
   noStroke();
   noLoop();
 }
@@ -24,8 +24,8 @@ function draw() {
 
   // Define the number of rows and columns
   let numRows = 30;
-  let sidePadding = 40;
-  let vertPadding = 60;
+  let sidePadding = 100;
+  let vertPadding = 120;
 
   // Calculate the space available for rectangles
   let availableWidth = width - 2 * sidePadding;
@@ -44,10 +44,10 @@ function draw() {
 
     // Set random colors for the two rectangles
     fill(random(COLORS));
-    rect(sidePadding, y, split - sidePadding, rowHeight);
+    rect(sidePadding, y, split - sidePadding + 1, rowHeight + 1);
 
     fill(random(COLORS));
-    rect(split, y, sidePadding + availableWidth - split, rowHeight);
+    rect(split, y, sidePadding + availableWidth - split, rowHeight + 1);
   }
 
   addNoise();

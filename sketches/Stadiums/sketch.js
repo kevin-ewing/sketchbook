@@ -1,19 +1,19 @@
 const NOISE_DIFF = 20;
 const NOISE_DF = 1;
 let COLORS = [
-  [285, 82, 33], // #2b0f54
-  [333, 84, 67], // #ab1f65
-  [350, 69, 100], // #ff4f69
-  [0, 3, 97], // #fff7f8
-  [22, 74, 100], // #ff8142
-  [50, 73, 100], // #ffda45
-  [225, 81, 86], // #3368dc
-  [151, 69, 93], // #49ec9d
+  [264, 82, 33], // #2b0f54
+  [330, 82, 67], // #ab1f65
+  [351, 69, 100], // #ff4f69
+  [353, 3, 97], // #fff7f8
+  [20, 74, 100], // #ff8142
+  [48, 73, 100], // #ffda45
+  [221, 77, 86], // #3368dc
+  [187, 69, 93], // #49d9ec
 ];
 
 function setup() {
-  createCanvas(600, 900);
-  pixelDensity(4);
+  createCanvas(1000, 1259);
+  pixelDensity(2);
   noLoop();
 }
 
@@ -23,11 +23,11 @@ function draw() {
 
   // Define the number of stadiums and the spacing between them
   let numStadiums = 7;
-  let spacing = 30; // Spacing between stadiums
+  let spacing = 50; // Spacing between stadiums
 
   // Calculate the initial dimensions of the outermost stadium
   let initialWidth = width * 0.8;
-  let initialHeight = height * 0.8;
+  let initialHeight = height * 0.9;
   let x = width / 2;
   let y = height / 2;
 
@@ -37,7 +37,7 @@ function draw() {
     let h = initialHeight - i * 2 * spacing;
 
     // Adjust position if needed (in this case, the stadiums are centered)
-    let numColors = 3; // Number of colors in the gradient
+    let numColors = 2; // Number of colors in the gradient
 
     drawGradientStadium(x, y, w, h, numColors);
   }
@@ -64,7 +64,7 @@ function drawGradientStadium(x, y, stadiumWidth, stadiumHeight, numColors) {
   for (let i = 0; i < numColors; i++) {
     let h = hue(baseColor); // Keep the hue of the base color
     let s = saturation(baseColor); // Keep the saturation of the base color
-    let b = brightness(baseColor) * random(0.5, 1.5); // Randomly alter the brightness
+    let b = brightness(baseColor) * random(0.8, 1.2); // Randomly alter the brightness
     b = constrain(b, 0, 100); // Ensure brightness stays within bounds
     colors.push(color(h, s, b)); // Add the modified color to the gradient
   }
