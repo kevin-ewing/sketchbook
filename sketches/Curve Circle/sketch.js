@@ -1,7 +1,7 @@
 const NOISE_DIFF = 20;
 const NOISE_DF = 1;
-const NUM_CURVES = 5000;
-const HIGHLIGHT_COUNT = 4000;
+const NUM_CURVES = 20000;
+const HIGHLIGHT_COUNT = 10000;
 
 let COLORS = [
   "#2b0f54",
@@ -17,7 +17,7 @@ let COLORS = [
 function setup() {
   createCanvas(windowWidth, windowHeight);
   noFill();
-  strokeWeight(0.025);
+  strokeWeight(.025);
   noLoop();
 }
 
@@ -28,6 +28,27 @@ function draw() {
   let circleRadius = min(width, height) * 0.3;
 
   let shuffledColors = COLORS.slice().sort(() => random() - 0.5);
+
+    // Generate a random highlight point on the circle
+    let highlightAngle = random(TWO_PI);
+    let highlightX = centerX + cos(highlightAngle) * circleRadius;
+    let highlightY = centerY + sin(highlightAngle) * circleRadius;
+  
+    for (let i = 0; i < HIGHLIGHT_COUNT; i++) {
+      let targetAngle = random(TWO_PI);
+      let targetX = centerX + cos(targetAngle) * circleRadius;
+      let targetY = centerY + sin(targetAngle) * circleRadius;
+  
+      let controlX = centerX + randomGaussian(0, circleRadius);
+      let controlY = centerY + randomGaussian(0, circleRadius);
+      stroke(255,255,255);
+      bezier(highlightX, highlightY, controlX, controlY, controlX, controlY, targetX, targetY);
+
+    }
+    ellipseMode(CENTER)
+    fill(0,0,0)
+    circle(centerX, centerY, circleRadius*2 + 1);
+    noFill();
 
   let curves = [];
 
@@ -41,8 +62,8 @@ function draw() {
     let x2 = centerX + cos(angle2) * circleRadius;
     let y2 = centerY + sin(angle2) * circleRadius;
 
-    let controlX = centerX + randomGaussian(0, circleRadius * random(1.1, 1.3));
-    let controlY = centerY + randomGaussian(0, circleRadius * random(1.1, 1.3));
+    let controlX = centerX + randomGaussian(0, circleRadius);
+    let controlY = centerY + randomGaussian(0, circleRadius);
 
     let distanceFromCenter = dist(controlX, controlY, centerX, centerY);
     curves.push({ x1, y1, x2, y2, controlX, controlY, distanceFromCenter });
@@ -59,24 +80,6 @@ function draw() {
     bezier(x1, y1, controlX, controlY, controlX, controlY, x2, y2);
   }
 
-  // Generate a random highlight point on the circle
-  let highlightAngle = random(TWO_PI);
-  let highlightX = centerX + cos(highlightAngle) * circleRadius;
-  let highlightY = centerY + sin(highlightAngle) * circleRadius;
-
-  let highlightColor = color(255, 255, 255, 150); // Soft white highlight curves
-
-  for (let i = 0; i < HIGHLIGHT_COUNT; i++) {
-    let targetAngle = random(TWO_PI);
-    let targetX = centerX + cos(targetAngle) * circleRadius;
-    let targetY = centerY + sin(targetAngle) * circleRadius;
-
-    let controlX = centerX + randomGaussian(0, circleRadius * random(1.1, 1.3));
-    let controlY = centerY + randomGaussian(0, circleRadius * random(1.1, 1.3));
-
-    stroke(highlightColor);
-    bezier(highlightX, highlightY, controlX, controlY, controlX, controlY, targetX, targetY);
-  }
 }
 
 function windowResized() {
